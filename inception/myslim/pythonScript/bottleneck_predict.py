@@ -16,8 +16,6 @@ from preprocessing import preprocessing_factory
 
 tf.app.flags.DEFINE_integer('num_classes', 
                             5, 'The number of classes.')
-tf.app.flags.DEFINE_string('pred_out',
-                           None, 'Output file for prediction probabilities.')
 tf.app.flags.DEFINE_string('bot_out',
                            None, 'Output file for bottleneck features.')
 tf.app.flags.DEFINE_string('model_name', 
@@ -66,7 +64,6 @@ def main(_):
     init_fn(sess)
 
     fto_bot = open(FLAGS.bot_out, 'w')
-    fto_pred = open(FLAGS.pred_out, 'w')
     
     filelist=os.listdir(FLAGS.filedir)
     for i in range(len(filelist)):
@@ -83,11 +80,9 @@ def main(_):
             label=str(example.features.feature['image/class/label'].int64_list.value[0])
             preds = sess.run(probabilities, feed_dict={image_string:x})
             bottleneck_values = sess.run(bottleneck_tensor_name, {image_string: x})
-            fto_pred.write(filenames + '\t' + label)
+            fto_bot.write(filenames + '\t' + label)
             for p in range(len(preds[0])):
                 fto_pred.write('\t' + str(preds[0][p]))
-            fto_pred.write('\n')
-            fto_bot.write(filenames + '\t' + label)
             for p in range(len(bottleneck_values[0][0][0])):
                 fto_bot.write('\t' + str(bottleneck_values[0][0][0][p]))
             fto_bot.write('\n')        
@@ -97,8 +92,6 @@ def main(_):
         tf.logging.info('used time: %s' % used_time)
 
     fto_bot.close()
-    fto_pred.close()
-
     sess.close()
 
 if __name__ == '__main__':

@@ -16,7 +16,6 @@ echo $pred_out $bot_out
 
 python $CurDir/../pythonScript/bottleneck_predict.py \
     --num_classes=$num_classes \
-    --pred_out=$pred_out \
     --bot_out=$bot_out \
     --model_name=$model_name \
     --checkpoint_path=$TRAIN_DIR \
