@@ -2,7 +2,7 @@
 
 This directory contains the code to quantify histopathology features from H&E stained images using Inception-V4 in a Pan-cancer tissue classification setting.
 
-[[https://github.com/yufu2015/PathImaging/blob/master/readme.svg|alt=readme]]
+![method outline](https://github.com/yufu2015/PathImaging/blob/master/readme.svg)
 
 ## Installation
 
