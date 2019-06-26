@@ -1,4 +1,4 @@
-![method outline](https://github.com/yufu2015/PathImaging/blob/master/method.svg)
+![method outline](https://github.com/yufu2015/PathImaging/blob/master/readme.svg)
 
 # Pan-cancer quantitative histopathology analysis using deep learning
 
