@@ -2,9 +2,9 @@
 
 # Pan-cancer quantitative histopathology analysis using deep learning
 
-This directory contains the code to quantify histopathology features from H&E stained images using Inception-V4 in a Pan-cancer tissue classification setting.
+This directory contains the code to quantify histopathology features from H&E stained histopathology images using Inception-V4 in a Pan-cancer tissue classification setting.
 
-The code is in shell and python.
+The code is written in shell and python.
 
 
 ## External Prerequisites:
@@ -19,7 +19,7 @@ https://www.tensorflow.org/install
 
 The histopathology images used are from TCGA (https://portal.gdc.cancer.gov/), open access to all. Only images from frozen tissue are included.
 
-The dataset is composed with 42 normal and tumor tissue types from 28 cancer types. Labels used in the classification can be found here /data/codebook.txt.
+The dataset is composed with 42 normal and tumor tissue types from 28 cancers. Labels used in the classification can be found here /data/codebook.txt.
 
 ## How to use
 Run inception/pipeline.sh (with user defined directories)
