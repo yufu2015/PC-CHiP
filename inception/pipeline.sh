@@ -13,11 +13,11 @@ python preprocess/imgconvert.py $PATH2img $imgID $OutputDir/tiles
 
 tfrecordDir=$OutputDir/process_train
 mkdir -p $tfrecordDir
-bash $CurDir/myslim/run/convert_ls.sh $OutputDir/file_info_train $tfrecordDir 320
+bash $CurDir/myslim/run/convert.sh $OutputDir/file_info_train $tfrecordDir 320
 
 tfrecordDir=$OutputDir/process_test
 mkdir -p $tfrecordDir
-bash $CurDir/myslim/run/convert_ls.sh $OutputDir/file_info_test $tfrecordDir 320
+bash $CurDir/myslim/run/convert.sh $OutputDir/file_info_test $tfrecordDir 320
 
 #### train network ####
 # download pretrained Inception-V4 to $CurDir/myslim/checkpoint and decompress
