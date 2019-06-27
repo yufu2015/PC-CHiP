@@ -8,12 +8,20 @@ The code is written in shell and python.
 
 
 ## External Prerequisites:
+OpenCV
+https://pypi.org/project/opencv-python/
+
+Numpy
+https://www.numpy.org/
 
 OpenSlide
 https://openslide.org/
 
 tensorflow
 https://www.tensorflow.org/install
+
+Pre-trained Inception-V4
+https://github.com/tensorflow/models/tree/master/research/slim
 
 ## Dataset
 

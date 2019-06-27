@@ -2,6 +2,11 @@
 CurDir="$( cd "$(dirname "$0")" ; pwd -P )"
 OutputDir="/tmp/outputdir"
 
+#### image tiling ####
+# tiles will be saved under $OutputDir/tiles with name $imgID_posX_posY.jpg
+
+python preprocess/imgconvert.py $PATH2img $imgID $OutputDir/tiles 
+
 #### convert images to tfrecord ####
 #file_info_train: //path to tiles//label//code of label//tumor purity(-100 for normal); sep by space
 #codebook.txt: //cancer//tissue//code; sep by space
@@ -15,6 +20,7 @@ mkdir -p $tfrecordDir
 bash $CurDir/myslim/run/convert_ls.sh $OutputDir/file_info_validation $tfrecordDir 320
 
 #### train network ####
+# download pretrained Inception-V4 to $CurDir/myslim/checkpoint and decompress
 
 PRETRAINED_CHECKPOINT_DIR=$CurDir/myslim/checkpoint
 DATASET_DIR=$OutputDir/process_train
