@@ -30,7 +30,7 @@ The histopathology images used are from TCGA (https://portal.gdc.cancer.gov/), o
 The dataset is composed with 42 normal and tumor tissue types from 28 cancers. Labels used in the classification can be found here /data/codebook.txt.
 
 ## How to use
-Run inception/pipeline.sh (with user defined directories)
+Run inception/pipeline.sh (change relative paths)
 
 
   
