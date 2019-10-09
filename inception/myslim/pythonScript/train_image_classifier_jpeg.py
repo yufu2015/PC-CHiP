@@ -429,8 +429,19 @@ def main(_):
           num_readers=FLAGS.num_readers,
           common_queue_capacity=20 * FLAGS.batch_size,
           common_queue_min=10 * FLAGS.batch_size)
-      [image, label, t_p] = provider.get(['image', 'label', 'tp'])
+      [image, label, t_p, quality] = provider.get(['image', 'label', 'tp', 'Q'])
       
+      Q_DICT = {b'YUV16Q70': 0, 
+                b'RGBQ20': 1, 
+                b'RGBQ50': 2, 
+                b'RGBQ70': 3,  
+                b'RGBQ30': 4}
+      qtable = tf.contrib.lookup.HashTable(
+       tf.contrib.lookup.KeyValueTensorInitializer(list(Q_DICT.keys()), list(Q_DICT.values()) , key_dtype=tf.string, value_dtype=tf.int64), -1)
+      def norm_q(quality, qtable):
+          quality = qtable.lookup(quality)
+          return quality
+      quality = norm_q(quality, qtable)
 
       label -= FLAGS.labels_offset
 
@@ -438,8 +449,8 @@ def main(_):
 
       image = image_preprocessing_fn(image, train_image_size, train_image_size)
 
-      images, labels, t_ps = tf.train.batch(
-          [image, label, t_p],
+      images, labels, t_ps, qualities = tf.train.batch(
+          [image, label, t_p, quality],
           batch_size=FLAGS.batch_size,
           num_threads=FLAGS.num_preprocessing_threads,
           capacity=5 * FLAGS.batch_size)
@@ -457,25 +468,29 @@ def main(_):
       labels = tf.add_n([neg_M, onehot_tmp])
 
       batch_queue = slim.prefetch_queue.prefetch_queue(
-          [images, labels, t_ps], capacity=2 * deploy_config.num_clones)
+          [images, labels, t_ps, qualities], capacity=2 * deploy_config.num_clones)
 
     ####################
     # Define the model #
     ####################
     def clone_fn(batch_queue):
       """Allows data parallelism by creating multiple clones of network_fn."""
-      images, labels, t_ps = batch_queue.dequeue()
-      logits, end_points = network_fn(images)
+      images, labels, t_ps, qualities = batch_queue.dequeue()
+      inputs = (images, qualities) 
+      logits, end_points = network_fn(inputs)
 
       #############################
       # Specify the loss function #
       #############################
       if 'AuxLogits' in end_points:
+        auxlogits=end_points['AuxLogits']
+        if 'Logits_cat' in end_points:
+          auxlogits=auxlogits + end_points['Logits_cat'] # inject logits_cat
         tf.losses.softmax_cross_entropy(
-            logits=end_points['AuxLogits'], onehot_labels=labels,
+            logits=auxlogits, onehot_labels=labels,
             label_smoothing=FLAGS.label_smoothing, weights=0.4, scope='aux_loss')
-      tf.losses.softmax_cross_entropy(
-          logits=logits, onehot_labels=labels,
+      softmax_cross_entropy(
+          logits=logits, onehot_labels=labels, 
           label_smoothing=FLAGS.label_smoothing, weights=1.0)
       return end_points
 
