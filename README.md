@@ -23,6 +23,12 @@ https://www.tensorflow.org/install
 Pre-trained Inception-V4
 https://github.com/tensorflow/models/tree/master/research/slim
 
+Re-trained Inception-V4
+TBA
+
+Re-trained altered Inception-V4
+TBA
+
 ## Dataset
 
 The histopathology images used are from TCGA (https://portal.gdc.cancer.gov/), open access to all. Only images from frozen tissue are included.

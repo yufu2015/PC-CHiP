@@ -48,4 +48,11 @@ bash $CurDir/postprocess/bot.transform.sh $OutputDir/bot.test.txt
 bash $CurDir/postprocess/get.pred.within.cancer.sh $OutputDir/bot.train.txt.pred
 bash $CurDir/postprocess/get.pred.within.cancer.sh $OutputDir/bot.test.txt.pred
 
+#### train altered inception_v4 network ####
 
+PRETRAINED_CHECKPOINT_DIR=$CurDir/myslim/checkpoint
+DATASET_DIR=$OutputDir/process_train
+TRAIN_DIR=$OutputDir/result_v4_v2
+bash $CurDir/myslim/run/load_inception_v4_alt.sh $PRETRAINED_CHECKPOINT_DIR $TRAIN_DIR $DATASET_DIR tumors_all 20000
+
+# same scripts for down stream analysis 
