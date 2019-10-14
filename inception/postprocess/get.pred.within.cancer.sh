@@ -16,5 +16,5 @@ awk '{p1=0;
      if($2 ~ /TCGA_THCA/){p1=36; p2=37};
      isT="F";
      if(($2 ~ /normal/ && $(p1+8)>$(p2+8)) || ($2 !~ /normal/ && $(p1+8)<$(p2+8))){isT="T"};
-     if(p1!=0){printf "%s %s %s %s %s\n", $1, $2, isT, $(p1+8), $(p2+8)}}' $input > $input.within.cancer
+     if(p1!=0){printf "%s %s %s %s %s %s %s\n", $1, $2, $6, $7, isT, $(p1+8), $(p2+8)}}' $input > $input.within.cancer
 

@@ -48,7 +48,7 @@ def bytes_feature2(values):
   return tf.train.Feature(bytes_list=tf.train.BytesList(values))
 
 
-def image_to_tfexample(image_data, image_format, height, width, class_id, tp, filename):
+def image_to_tfexample(image_data, image_format, height, width, class_id, tp, filename, Q):
   return tf.train.Example(features=tf.train.Features(feature={
       'image/encoded': bytes_feature(image_data),
       'image/format': bytes_feature(image_format),
@@ -56,6 +56,7 @@ def image_to_tfexample(image_data, image_format, height, width, class_id, tp, fi
       'image/height': int64_feature(height),
       'image/width': int64_feature(width),
       'image/tp':int64_feature(tp),
+      'image/Q': bytes_feature(Q),
       'image/filename': bytes_feature(tf.compat.as_bytes(filename)),
   }))
 

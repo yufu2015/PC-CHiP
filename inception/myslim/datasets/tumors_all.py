@@ -35,6 +35,7 @@ _ITEMS_TO_DESCRIPTIONS = {
     'image': 'A color image of varying size.',
     'label': 'A single integer between 0 and 4',
     'tp': 'tumor purity',
+    'Q': 'jpeg quality',
     'filename': 'filename', 
 }
 
@@ -70,6 +71,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
   keys_to_features = {
       'image/encoded': tf.FixedLenFeature((), tf.string, default_value=''),
       'image/tp': tf.FixedLenFeature([], tf.int64, default_value=tf.zeros([], dtype=tf.int64)),
+      'image/Q': tf.FixedLenFeature((), tf.string, default_value=''),
       'image/format': tf.FixedLenFeature((), tf.string, default_value='png'),
       'image/class/label': tf.FixedLenFeature([], tf.int64, default_value=tf.zeros([], dtype=tf.int64)),
       'image/filename': tf.FixedLenFeature((), tf.string, default_value=''),
@@ -79,6 +81,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
       'image': slim.tfexample_decoder.Image(),
       'label': slim.tfexample_decoder.Tensor('image/class/label'),
       'tp': slim.tfexample_decoder.Tensor('image/tp'),
+      'Q': slim.tfexample_decoder.Tensor('image/Q'), 
       'filename': slim.tfexample_decoder.Tensor('image/filename'),
   }
 

@@ -6,4 +6,4 @@ file_info=$1
 tfrecordDir=$2
 num_shards=$3
 
-python $CurDir/../pythonScript/convert.py $file_info $tfrecordDir $num_shards
+python $CurDir/../datasets/convert.py $file_info $tfrecordDir $num_shards
