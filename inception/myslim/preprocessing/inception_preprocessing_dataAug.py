@@ -217,33 +217,50 @@ def preprocess_for_train(image, height, width, bbox,
       bbox = tf.constant([0.0, 0.0, 1.0, 1.0],
                          dtype=tf.float32,
                          shape=[1, 1, 4])
+
     if image.dtype != tf.float32:
       image = tf.image.convert_image_dtype(image, dtype=tf.float32)
 
-    # Add random jpeg
-    image = tf.cond(tf.random.uniform([]) > .33,
-                              lambda: tf.image.random_jpeg_quality(image, 30, 100),
-                              lambda: image)
-    add_image_summaries = True
     if add_image_summaries:
-        tf.summary.image('jpeg_distortion',
-                             tf.expand_dims(image, 0)) 
+      tf.summary.image('1_original_image',
+                       tf.expand_dims(image, 0))
 
-    
-    # Each bounding box has shape [1, num_boxes, box coords] and
-    # the coordinates are ordered [ymin, xmin, ymax, xmax].
-    image_with_box = tf.image.draw_bounding_boxes(tf.expand_dims(image, 0),
-                                                  bbox)
-    tf.summary.image('image_with_bounding_boxes', image_with_box)
+    image = tf.image.random_jpeg_quality(image, 30, 100)
+    if add_image_summaries:
+      tf.summary.image('2_ramdom_randomQaul_image', tf.expand_dims(image, 0))
 
-    distorted_image, distorted_bbox = distorted_bounding_box_crop(image, bbox)
+    #random rotation -45 to 45
+    random_angle = random_ops.random_uniform([], minval = -np.pi / 8, maxval = np.pi / 8)
+    rotated_image=tf.contrib.image.rotate(image, random_angle, interpolation='BILINEAR')
+
+    if add_image_summaries:
+      tf.summary.image('4_ramdom_rotated_image',
+                       tf.expand_dims(rotated_image, 0))
+
+    #crop image in the center
+    rotated_image = tf.image.central_crop(rotated_image, 0.6)
+
+    if add_image_summaries:
+      tf.summary.image('5_centralcropped_image',
+                       tf.expand_dims(rotated_image, 0))
+
+    bbox = tf.constant([0, 0, 1, 1],
+                       dtype=tf.float32,
+                       shape=[1, 1, 4])
+    distorted_image, distorted_bbox = distorted_bounding_box_crop(rotated_image, bbox, 
+                                                                  aspect_ratio_range=(0.9, 1.1),
+                                                                  area_range=(0.2, 1.0), 
+                                                                  min_object_covered=0.9)
     # Restore the shape since the dynamic slice based upon the bbox_size loses
     # the third dimension.
     distorted_image.set_shape([None, None, 3])
-    image_with_distorted_box = tf.image.draw_bounding_boxes(
-        tf.expand_dims(image, 0), distorted_bbox)
-    tf.summary.image('images_with_distorted_bounding_box',
-                     image_with_distorted_box)
+
+    cropped_image_with_distorted_box = tf.image.draw_bounding_boxes(
+        tf.expand_dims(rotated_image, 0), distorted_bbox)
+
+    if add_image_summaries:
+      tf.summary.image('6_distorted_bounding_box',
+                       cropped_image_with_distorted_box)
 
     # This resizing operation may distort the images because the aspect
     # ratio is not respected. We select a resize method in a round robin
@@ -257,11 +274,8 @@ def preprocess_for_train(image, height, width, bbox,
         lambda x, method: tf.image.resize_images(x, [height, width], method=method),
         num_cases=num_resize_cases)
 
-    tf.summary.image('cropped_resized_image',
+    tf.summary.image('7_distorted_image',
                      tf.expand_dims(distorted_image, 0))
-
-    # Randomly flip the image horizontally.
-    distorted_image = tf.image.random_flip_left_right(distorted_image)
 
     # Randomly distort the colors. There are 4 ways to do it.
     distorted_image = apply_with_random_selector(
@@ -269,10 +283,14 @@ def preprocess_for_train(image, height, width, bbox,
         lambda x, ordering: distort_color(x, ordering, fast_mode),
         num_cases=4)
 
+    if add_image_summaries:
+            tf.summary.image('8_color_dist',
+                             tf.expand_dims(distorted_image, 0))
+
     # Add white noise
     distorted_image = white_gaussian_noise(distorted_image, height, 0.03)
     if add_image_summaries:
-            tf.summary.image('white_gaussian_noise',
+            tf.summary.image('9_white_gaussian_noise',
                              tf.expand_dims(distorted_image, 0)) 
 
     tf.summary.image('final_distorted_image',
@@ -283,7 +301,7 @@ def preprocess_for_train(image, height, width, bbox,
 
 
 def preprocess_for_eval(image, height, width,
-                        central_fraction=0.875, scope=None):
+                        central_fraction=0.6, scope=None):
   """Prepare one image for evaluation.
 
   If height and width are specified it would output an image with that size by
@@ -307,7 +325,7 @@ def preprocess_for_eval(image, height, width,
   with tf.name_scope(scope, 'eval_image', [image, height, width]):
     if image.dtype != tf.float32:
       image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-    # Crop the central region of the image with an area containing 87.5% of
+
     # the original image.
     if central_fraction:
       image = tf.image.central_crop(image, central_fraction=central_fraction)

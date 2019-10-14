@@ -23,11 +23,8 @@ https://www.tensorflow.org/install
 Pre-trained Inception-V4
 https://github.com/tensorflow/models/tree/master/research/slim
 
-Re-trained Inception-V4
-TBA
-
-Re-trained altered Inception-V4
-TBA
+Re-trained Inception-V4 and re-trained altered Inception-V4
+https://www.ebi.ac.uk/biostudies (study id: S-BSST292)
 
 ## Dataset
 
