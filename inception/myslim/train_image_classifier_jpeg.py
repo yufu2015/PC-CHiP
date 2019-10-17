@@ -487,7 +487,6 @@ def main(_):
           common_queue_capacity=20 * FLAGS.batch_size,
           common_queue_min=10 * FLAGS.batch_size)
       [image, label, t_p, quality] = provider.get(['image', 'label', 'tp', 'Q'])
-      quality=tf.Print(quality,[quality], message="quality")
 
       Q_DICT = {b'YUV16Q=70': 0, 
                 b'RGBQ=20': 1, 
@@ -502,7 +501,6 @@ def main(_):
           return quality
 
       quality = norm_q(quality, qtable)
-      quality=tf.Print(quality,[quality], message="quality code")
 
       label -= FLAGS.labels_offset
 
@@ -517,11 +515,6 @@ def main(_):
           capacity=5 * FLAGS.batch_size)
       qualities = tf.expand_dims(tf.cast(qualities, tf.float32), 1)
       
-      tf.logging.info('qualities:  %s' % qualities)
-      tf.logging.info('t_ps:  %s' % t_ps)
-      labels = tf.Print(labels, [labels], summarize = FLAGS.batch_size, message="labels")
-      qualities=tf.Print(qualities,[qualities], summarize = FLAGS.batch_size, message="qualities")
-
       t_ps=tf.abs(tf.divide(tf.cast(t_ps, tf.float32), tf.cast(100, tf.float32)))
 
       neg_ls = tf.divide(tf.subtract(tf.cast(1, tf.float32), t_ps), tf.cast(dataset.num_classes - FLAGS.labels_offset -1, tf.float32))
