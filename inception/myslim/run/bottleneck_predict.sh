@@ -14,7 +14,7 @@ echo $num_classes
 echo $DATASET_DIR 
 echo $pred_out $bot_out
 
-python $CurDir/../pythonScript/bottleneck_predict.py \
+python $CurDir/../bottleneck_predict.py \
     --num_classes=$num_classes \
     --bot_out=$bot_out \
     --model_name=$model_name \

@@ -7,7 +7,7 @@ DATASET_DIR=$2
 dataset_name=$3
 model_name=$4
 
-python $$CurDir/../pythonScript/eval_image_classifier.py \
+python $$CurDir/../eval_image_classifier.py \
     --alsologtostderr \
     --checkpoint_path=$TRAIN_DIR \
     --dataset_dir=$DATASET_DIR \

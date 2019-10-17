@@ -19,9 +19,10 @@ from __future__ import division
 from __future__ import print_function
 
 import tensorflow as tf
+import numpy as np
 
 from tensorflow.python.ops import control_flow_ops
-
+from tensorflow.python.ops import random_ops
 
 def apply_with_random_selector(x, func, num_cases):
   """Computes func(x, sel), with sel sampled from [0...num_cases-1].
@@ -186,7 +187,8 @@ def distorted_bounding_box_crop(image,
 
 def preprocess_for_train(image, height, width, bbox,
                          fast_mode=True,
-                         scope=None):
+                         scope=None,
+                         add_image_summaries=True):
   """Distort one image for training a network.
 
   Distorting images provides a useful technique for augmenting the data

@@ -19,7 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 # pylint: disable=unused-import
-from nets.inception_v4 import inception_v4
-from nets.inception_v4 import inception_v4_arg_scope
-from nets.inception_v4 import inception_v4_base
+from nets.inception_v4_alt import inception_v4
+from nets.inception_v4_alt import inception_v4_arg_scope
+from nets.inception_v4_alt import inception_v4_base
 # pylint: enable=unused-import

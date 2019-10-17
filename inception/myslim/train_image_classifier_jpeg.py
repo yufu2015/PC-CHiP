@@ -27,6 +27,14 @@ from preprocessing import preprocessing_factory
 
 slim = tf.contrib.slim
 
+from tensorflow.python.framework import ops
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import array_ops
+from tensorflow.python.framework import dtypes
+from tensorflow.python.ops import standard_ops
+from tensorflow.python.ops import nn
+
+
 tf.app.flags.DEFINE_string(
     'master', '', 'The address of the TensorFlow master to use.')
 
@@ -218,7 +226,56 @@ tf.app.flags.DEFINE_boolean(
     'When restoring a checkpoint would ignore missing variables.')
 
 FLAGS = tf.app.flags.FLAGS
+class Reduction(object):
+  """Types of loss reduction."""
 
+  # Un-reduced weighted losses with the same shape as input.
+  NONE = "none"
+
+  # Scalar sum of `NONE`.
+  SUM = "weighted_sum"
+
+  # Scalar `SUM` divided by sum of weights.
+  MEAN = "weighted_mean"
+
+  # Scalar `SUM` divided by number of non-zero weights.
+  SUM_BY_NONZERO_WEIGHTS = "weighted_sum_by_nonzero_weights"
+
+  @classmethod
+  def all(cls):
+    return (
+        cls.NONE,
+        cls.SUM,
+        cls.MEAN,
+        cls.SUM_BY_NONZERO_WEIGHTS)
+
+  @classmethod
+  def validate(cls, key):
+    if key not in cls.all():
+      raise ValueError("Invalid ReductionKey %s." % key)
+
+def softmax_cross_entropy(
+    onehot_labels, logits, weights=1.0, label_smoothing=0, scope=None,
+    loss_collection=ops.GraphKeys.LOSSES,
+    reduction=Reduction.SUM_BY_NONZERO_WEIGHTS):
+
+  if onehot_labels is None:
+    raise ValueError("onehot_labels must not be None.")
+  if logits is None:
+    raise ValueError("logits must not be None.")
+  with ops.name_scope(scope, "softmax_cross_entropy_loss",
+                      (logits, onehot_labels, weights)) as scope:
+    logits = ops.convert_to_tensor(logits)
+    onehot_labels = math_ops.cast(onehot_labels, logits.dtype)
+    logits.get_shape().assert_is_compatible_with(onehot_labels.get_shape())
+
+    losses = nn.softmax_cross_entropy_with_logits(labels=onehot_labels,
+                                                  logits=logits,
+                                                  name="xentropy")
+    tf.logging.info('losses  %s' % losses)
+    tf.logging.info('onehot_lables  %s' % onehot_labels)
+    return tf.losses.compute_weighted_loss(
+        losses, weights, scope, loss_collection, reduction=reduction)
 
 def _configure_learning_rate(num_samples_per_epoch, global_step):
   """Configures the learning rate.
@@ -430,18 +487,22 @@ def main(_):
           common_queue_capacity=20 * FLAGS.batch_size,
           common_queue_min=10 * FLAGS.batch_size)
       [image, label, t_p, quality] = provider.get(['image', 'label', 'tp', 'Q'])
-      
-      Q_DICT = {b'YUV16Q70': 0, 
-                b'RGBQ20': 1, 
-                b'RGBQ50': 2, 
-                b'RGBQ70': 3,  
-                b'RGBQ30': 4}
+      quality=tf.Print(quality,[quality], message="quality")
+
+      Q_DICT = {b'YUV16Q=70': 0, 
+                b'RGBQ=20': 1, 
+                b'RGBQ=50': 2, 
+                b'RGBQ=70': 3,  
+                b'RGBQ=30': 4}
       qtable = tf.contrib.lookup.HashTable(
-       tf.contrib.lookup.KeyValueTensorInitializer(list(Q_DICT.keys()), list(Q_DICT.values()) , key_dtype=tf.string, value_dtype=tf.int64), -1)
+                   tf.contrib.lookup.KeyValueTensorInitializer(list(Q_DICT.keys()), list(Q_DICT.values()) , 
+                                                               key_dtype=tf.string, value_dtype=tf.int64), -1)
       def norm_q(quality, qtable):
           quality = qtable.lookup(quality)
           return quality
+
       quality = norm_q(quality, qtable)
+      quality=tf.Print(quality,[quality], message="quality code")
 
       label -= FLAGS.labels_offset
 
@@ -454,9 +515,13 @@ def main(_):
           batch_size=FLAGS.batch_size,
           num_threads=FLAGS.num_preprocessing_threads,
           capacity=5 * FLAGS.batch_size)
-
+      qualities = tf.expand_dims(tf.cast(qualities, tf.float32), 1)
+      
+      tf.logging.info('qualities:  %s' % qualities)
+      tf.logging.info('t_ps:  %s' % t_ps)
       labels = tf.Print(labels, [labels], summarize = FLAGS.batch_size, message="labels")
-      # t_ps Tensor("batch:2", shape=(64,), dtype=int64, device=/device:CPU:0)
+      qualities=tf.Print(qualities,[qualities], summarize = FLAGS.batch_size, message="qualities")
+
       t_ps=tf.abs(tf.divide(tf.cast(t_ps, tf.float32), tf.cast(100, tf.float32)))
 
       neg_ls = tf.divide(tf.subtract(tf.cast(1, tf.float32), t_ps), tf.cast(dataset.num_classes - FLAGS.labels_offset -1, tf.float32))
@@ -475,7 +540,8 @@ def main(_):
     ####################
     def clone_fn(batch_queue):
       """Allows data parallelism by creating multiple clones of network_fn."""
-      images, labels, t_ps, qualities = batch_queue.dequeue()
+      with tf.device(deploy_config.inputs_device()):
+        images, labels, t_ps, qualities = batch_queue.dequeue()
       inputs = (images, qualities) 
       logits, end_points = network_fn(inputs)
 
@@ -485,13 +551,15 @@ def main(_):
       if 'AuxLogits' in end_points:
         auxlogits=end_points['AuxLogits']
         if 'Logits_cat' in end_points:
-          auxlogits=auxlogits + end_points['Logits_cat'] # inject logits_cat
-        tf.losses.softmax_cross_entropy(
-            logits=auxlogits, onehot_labels=labels,
-            label_smoothing=FLAGS.label_smoothing, weights=0.4, scope='aux_loss')
+          auxlogits=auxlogits + end_points['Logits_cat']
+        slim.losses.softmax_cross_entropy(
+            end_points['AuxLogits'], labels,
+            label_smoothing=FLAGS.label_smoothing, weights=0.4,
+            scope='aux_loss')
+
       softmax_cross_entropy(
-          logits=logits, onehot_labels=labels, 
-          label_smoothing=FLAGS.label_smoothing, weights=1.0)
+        logits=logits, onehot_labels=labels, 
+        label_smoothing=FLAGS.label_smoothing, weights=1.0)
       return end_points
 
     # Gather initial summaries.

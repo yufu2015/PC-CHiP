@@ -1,5 +1,5 @@
 #path_2_tile class_name class_id tumor_purity jpeg_quality
-datadir/TCGA-A3-3362-11A-01-TS1_14323_8317.jpg KIRC_N 14 -100 RGBQ70
-datadir/TCGA-C9-A480-01A-01-TSA_15709_12937.jpg HNSC_T 11 98 RGBQ30
+datadir/TCGA-A3-3362-11A-01-TS1_14323_8317.jpg KIRC_N 14 -100 RGBQ=70
+datadir/TCGA-C9-A480-01A-01-TSA_15709_12937.jpg HNSC_T 11 98 RGBQ=30
 
  
