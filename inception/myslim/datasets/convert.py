@@ -37,7 +37,7 @@ def _get_dataset_filename(output_dir, split_name, shard_id, NUM_SHARDS):
   return output_filename
 
 
-def _convert_dataset(split_name, filenames, Qs, classnames, classids, output_dir, NUM_SHARDS):
+def _convert_dataset(split_name, filenames, tps, Qs, classnames, classids, output_dir, NUM_SHARDS):
   """Converts the given filenames to a TFRecord dataset.
   Args:
     split_name: The name of the dataset, either 'train' or 'validation'.
@@ -72,7 +72,7 @@ def _convert_dataset(split_name, filenames, Qs, classnames, classids, output_dir
             image_data = tf.gfile.FastGFile(filenames[i], 'rb').read()
             height, width = image_reader.read_image_dims(sess, image_data)
             class_id = classids[i]
-            tp=files_2_tp[filenames[i]]
+            tp=tps[i]
             filename=filenames[i]
             Q=Qs[i]
             example = dataset_utils.image_to_tfexample(
@@ -99,7 +99,7 @@ if __name__ == '__main__':
   image_filenames = []
   class_names = []
   class_ids = []
-  t_p = []
+  tps = []
   Qs = []
   with open(file_info) as f:
     for line in f:
@@ -107,7 +107,7 @@ if __name__ == '__main__':
       image_filenames.append(l[0])
       class_names.append(l[1])
       class_ids.append(int(l[2]))
-      t_p.append(int(l[3]))
+      tps.append(int(l[3]))
       Qs.append(l[4])
 
   # Divide into train and test:
@@ -116,7 +116,7 @@ if __name__ == '__main__':
   training_classids = class_ids
 
   # First, convert the training and validation sets.
-  _convert_dataset('train', training_filenames, Qs, training_classnames, training_classids,
+  _convert_dataset('train', training_filenames, tps, Qs, training_classnames, training_classids,
                    output_dir, NUM_SHARDS)
 
   print('\nFinished converting dataset!')
