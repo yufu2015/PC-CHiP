@@ -1,6 +1,6 @@
 ![method outline](https://github.com/yufu2015/PathImaging/blob/master/readme.png)
 
-# Pan-cancer quantitative histopathology analysis using deep learning
+# Pan-Cancer Computational Histopathology (PC-CHiP) analysis using deep learning
 
 This directory contains the code to quantify histopathology features from H&E stained histopathology images using Inception-V4 in a Pan-cancer tissue classification setting.
 
