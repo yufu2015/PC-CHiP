@@ -546,9 +546,12 @@ def main(_):
         if 'Logits_cat' in end_points:
           auxlogits=auxlogits + end_points['Logits_cat']
         slim.losses.softmax_cross_entropy(
-            end_points['AuxLogits'], labels,
+            auxlogits, labels,
             label_smoothing=FLAGS.label_smoothing, weights=0.4,
             scope='aux_loss')
+
+      if 'Logits_cat' in end_points:
+          logits=logits + end_points['Logits_cat']
 
       softmax_cross_entropy(
         logits=logits, onehot_labels=labels, 

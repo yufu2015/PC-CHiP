@@ -131,8 +131,8 @@ def salt_and_pepper(img, sz, min_r=0., max_r=0.05):
 def distorted_bounding_box_crop(image,
                                 bbox,
                                 min_object_covered=0.1,
-                                aspect_ratio_range=(0.75, 1.33),
-                                area_range=(0.05, 1.0),
+                                aspect_ratio_range=(0.95, 1.05),
+                                area_range=(0.8, 1.0),
                                 max_attempts=100,
                                 scope=None):
   """Generates cropped_image using a one of the bboxes randomly distorted.
@@ -240,7 +240,7 @@ def preprocess_for_train(image, height, width, bbox,
                        tf.expand_dims(rotated_image, 0))
 
     #crop image in the center
-    rotated_image = tf.image.central_crop(rotated_image, 0.6)
+    #rotated_image = tf.image.central_crop(rotated_image, 0.6)
 
     if add_image_summaries:
       tf.summary.image('5_centralcropped_image',
@@ -303,7 +303,7 @@ def preprocess_for_train(image, height, width, bbox,
 
 
 def preprocess_for_eval(image, height, width,
-                        central_fraction=0.6, scope=None):
+                        central_fraction=None, scope=None):
   """Prepare one image for evaluation.
 
   If height and width are specified it would output an image with that size by
