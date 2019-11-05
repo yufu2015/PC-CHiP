@@ -20,10 +20,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from preprocessing import cifarnet_preprocessing
 from preprocessing import inception_preprocessing
-from preprocessing import lenet_preprocessing
-from preprocessing import vgg_preprocessing
 from preprocessing import inception_preprocessing_dataAug
 
 slim = tf.contrib.slim
@@ -46,23 +43,9 @@ def get_preprocessing(name, is_training=False):
     ValueError: If Preprocessing `name` is not recognized.
   """
   preprocessing_fn_map = {
-      'cifarnet': cifarnet_preprocessing,
       'inception': inception_preprocessing,
-      'inception_v1': inception_preprocessing,
-      'inception_v2': inception_preprocessing,
-      'inception_v3': inception_preprocessing,
       'inception_v4': inception_preprocessing,
       'inception_v4_alt': inception_preprocessing_dataAug,
-      'inception_resnet_v2': inception_preprocessing,
-      'lenet': lenet_preprocessing,
-      'mobilenet_v1': inception_preprocessing,
-      'resnet_v1_50': vgg_preprocessing,
-      'resnet_v1_101': vgg_preprocessing,
-      'resnet_v1_152': vgg_preprocessing,
-      'vgg': vgg_preprocessing,
-      'vgg_a': vgg_preprocessing,
-      'vgg_16': vgg_preprocessing,
-      'vgg_19': vgg_preprocessing,
   }
 
   if name not in preprocessing_fn_map:

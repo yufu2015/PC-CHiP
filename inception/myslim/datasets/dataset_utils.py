@@ -56,7 +56,7 @@ def image_to_tfexample(image_data, image_format, height, width, class_id, tp, fi
       'image/height': int64_feature(height),
       'image/width': int64_feature(width),
       'image/tp':int64_feature(tp),
-      'image/Q': bytes_feature(Q),
+      'image/Q': bytes_feature(tf.compat.as_bytes(Q)),
       'image/filename': bytes_feature(tf.compat.as_bytes(filename)),
   }))
 

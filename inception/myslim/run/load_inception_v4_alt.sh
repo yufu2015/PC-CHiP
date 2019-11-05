@@ -8,14 +8,14 @@ DATASET_DIR=$3
 dataset_name=$4
 max_iter=$5
 
-python $CurDir/../pythonScript/train_image_classifier_jpeg.py \
+python $CurDir/../train_image_classifier_jpeg.py \
   --train_dir=${TRAIN_DIR} \
   --train_image_size=299 \
   --dataset_name=$dataset_name \
   --dataset_split_name=train \
   --dataset_dir=${DATASET_DIR} \
   --model_name=inception_v4_alt \
-  --checkpoint_path=${PRETRAINED_CHECKPOINT_DIR} \
+  --checkpoint_path=${PRETRAINED_CHECKPOINT_DIR}/model.ckpt-100000 \
   --checkpoint_exclude_scopes=InceptionV4/Logits,InceptionV4/AuxLogits \
   --max_number_of_steps=$max_iter \
   --batch_size=32 \

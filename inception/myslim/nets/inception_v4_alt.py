@@ -282,8 +282,6 @@ def inception_v4(inputs, num_classes=1001, is_training=True,
       inputs, categorical_inputs = inputs
         # categorical_inputs shape=(batch_size, categorical_info)
 
-
-
   end_points = {}
   with tf.variable_scope(scope, 'InceptionV4', [inputs], reuse=reuse) as scope:
     with slim.arg_scope([slim.batch_norm, slim.dropout],
@@ -326,19 +324,17 @@ def inception_v4(inputs, num_classes=1001, is_training=True,
             
           # Input categorical information to last layer
           if categorical_inputs != None:
-                        #if categorical_embeddings > 0:  # Use embeddings
-                        #    embedding_size = 2  # Arbitrary for now
-                        #    categorical_embeddings = tf.get_variable('word_embeddings', [categorical_embeddings, embedding_size])
-                        #    categorical_inputs = tf.nn.embedding_lookup(categorical_embeddings, categorical_inputs)
-                        #    net = tf.concat([net, categorical_inputs], axis=-1)
-            logits_cat = slim.fully_connected(categorical_inputs, num_classes, biases_initializer=None, activation_fn=None, scope='Logits_cat')
-            logits = logits + logits_cat
+            logits_cat = slim.fully_connected(categorical_inputs, 
+                                              num_classes,
+                                              biases_initializer=None,
+                                              activation_fn=None,
+                                              scope='Logits_cat')
             end_points["Logits_cat"] = logits_cat  
-            
+            logits = logits + logits_cat
+
           end_points['Logits'] = logits
           end_points['Predictions'] = tf.nn.softmax(logits, name='Predictions')
     return logits, end_points
 inception_v4.default_image_size = 299
-
 
 inception_v4_arg_scope = inception_utils.inception_arg_scope

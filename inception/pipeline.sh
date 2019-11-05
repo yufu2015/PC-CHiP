@@ -21,7 +21,8 @@ bash $CurDir/myslim/run/convert.sh $OutputDir/file_info_test $tfrecordDir 320
 
 #### train network ####
 # download pretrained Inception-V4 to $CurDir/myslim/checkpoint and decompress
-
+# change dataset info in dataset/tumors_all.py, notebly number of training and validation images
+ 
 PRETRAINED_CHECKPOINT_DIR=$CurDir/myslim/checkpoint
 DATASET_DIR=$OutputDir/process_train
 TRAIN_DIR=$OutputDir/result_v4

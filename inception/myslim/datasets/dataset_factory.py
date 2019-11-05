@@ -17,12 +17,11 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from datasets import tumors
 from datasets import tumors_all
 
+
 datasets_map = {
-    'tumors': tumors,
-    'tumors_all': tumors_all
+    'tumors_all': tumors_all,
 }
 
 
