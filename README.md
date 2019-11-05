@@ -8,16 +8,22 @@ The code is written in shell and python.
 
 
 ## External Prerequisites:
-OpenCV
+OpenCV 4.1.1 
 https://pypi.org/project/opencv-python/
 
-Numpy
+Numpy 1.17.3 
 https://www.numpy.org/
 
-OpenSlide
+OpenSlide 3.4.1
 https://openslide.org/
 
-tensorflow
+Python 3.4
+https://www.python.org/
+
+R 3.3.1
+https://cran.r-project.org/ 
+
+tensorflow 1.12
 https://www.tensorflow.org/install
 
 Pre-trained Inception-V4
@@ -26,9 +32,14 @@ https://github.com/tensorflow/models/tree/master/research/slim
 Re-trained Inception-V4 and re-trained altered Inception-V4
 https://www.ebi.ac.uk/biostudies (study id: S-BSST292)
 
+Slim 
+https://github.com/tensorflow/models/tree/master/research/slim
+
 ## Dataset
 
-The histopathology images used are from TCGA (https://portal.gdc.cancer.gov/), open access to all. Only images from frozen tissue are included.
+The histopathology images used in training are from TCGA (https://portal.gdc.cancer.gov/), open access to all. Only images from frozen tissue are included.
+
+The histopathology images used in training are from METABRIC (https://ega-archive.org/dacs/EGAC00001000484), controlled access.
 
 The dataset is composed with 42 normal and tumor tissue types from 28 cancers. Labels used in the classification can be found here /data/codebook.txt.
 
