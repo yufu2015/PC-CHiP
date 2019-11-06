@@ -46,8 +46,12 @@ The dataset is composed with 42 normal and tumor tissue types from 28 cancers. L
 ## How to use
 Run inception/pipeline.sh (change relative paths)
 
+## Citation
+Pan-cancer computational histopathology reveals mutations, tumor composition and prognosis
 
-  
+Fu Y, Jung AW, Torne RV … Moore L, Gerstung M. BioRxiv, (2019 Oct 25). 
+
+https://doi.org/10.1101/813543
 
 
 
