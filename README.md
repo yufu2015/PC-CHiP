@@ -48,7 +48,7 @@ The slide level feature mean and standard deviation and features of 50 randomly 
 
 ## How to use
 Run inception/pipeline.sh (change relative paths) for fine-tuning the Inception network and feature extraction.
-Molecular association discovery and related statistical testing were performed in R. The scripts are under the folder of Association_discovery.  
+Molecular association discovery and related statistical testing were performed in R.
 
 ## Citation
 Pan-cancer computational histopathology reveals mutations, tumor composition and prognosis
