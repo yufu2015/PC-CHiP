@@ -43,8 +43,12 @@ The histopathology images used in training are from METABRIC (https://ega-archiv
 
 The dataset is composed with 42 normal and tumor tissue types from 28 cancers. Labels used in the classification can be found here /data/codebook.txt.
 
+The slide level feature mean and standard deviation and features of 50 randomly selcted tiles per slide are available for all images used in this study at https://www.ebi.ac.uk/biostudies/studies/S-BSST292 (file subFeatures_TCGA.tar.gz)
+
+
 ## How to use
-Run inception/pipeline.sh (change relative paths)
+Run inception/pipeline.sh (change relative paths) for fine-tuning the Inception network and feature extraction.
+Molecular association discovery and related statistical testing were performed in R. The scripts are under the folder of Association_discovery.  
 
 ## Citation
 Pan-cancer computational histopathology reveals mutations, tumor composition and prognosis
