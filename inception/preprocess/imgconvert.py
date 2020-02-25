@@ -23,17 +23,17 @@ def main():
     filepath=sys.argv[1]
     img  = OpenSlide(filepath)
     if str(img.properties.values.__self__.get('tiff.ImageDescription')).split("|")[1] == "AppMag = 40":
-        sz=2048
-        seq=1748
-    else:
         sz=1024
-        seq=874
+        seq=924
+    else:
+        sz=512
+        seq=462
     [w, h] = img.dimensions
     for x in range(1, w, seq):
         for y in range(1, h, seq):
             img1=img.read_region(location=(x,y), level=0, size=(sz,sz))
             img11=img1.convert("RGB")
-            img111=img11.resize((1024,1024),Image.ANTIALIAS)
+            img111=img11.resize((512,512),Image.ANTIALIAS)
             grad=getGradientMagnitude(img)
             unique, counts = np.unique(grad, return_counts=True)
             if counts[np.argwhere(unique<=15)].sum() < 512*512*0.6:
