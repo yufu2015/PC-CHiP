@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 from __future__ import division
 import sys
 import os
@@ -34,7 +33,7 @@ def main():
             img1=img.read_region(location=(x,y), level=0, size=(sz,sz))
             img11=img1.convert("RGB")
             img111=img11.resize((512,512),Image.ANTIALIAS)
-            grad=getGradientMagnitude(img)
+            grad=getGradientMagnitude(img111)
             unique, counts = np.unique(grad, return_counts=True)
             if counts[np.argwhere(unique<=15)].sum() < 512*512*0.6:
                 img111.save(sys.argv[3] + "/" + sys.argv[2] + "_" +  str(x) + "_" + str(y) + '.jpg', 'JPEG', optimize=True, quality=94)
