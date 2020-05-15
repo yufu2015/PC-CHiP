@@ -23,6 +23,8 @@ def getGradientMagnitude(im):
 def main():
     filepath=sys.argv[1]
     img  = OpenSlide(filepath)
+    if not os.path.exists(sys.argv[3]):
+        os.makedirs(sys.argv[3])
     if str(img.properties.values.__self__.get('tiff.ImageDescription')).split("|")[1] == "AppMag = 40":
         sz=1024
         seq=924
