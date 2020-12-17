@@ -5,7 +5,7 @@ OutputDir="/tmp/outputdir"
 #### image tiling ####
 # tiles will be saved under $OutputDir/tiles with name $imgID_posX_posY.jpg
 
-python preprocess/imgconvert.py $PATH2img $imgID $OutputDir/tiles 
+python $CurDir/preprocess/imgconvert.py $PATH2img $imgID $OutputDir/tiles 
 
 #### convert images to tfrecord ####
 #file_info_train: //path to tiles//label//code of label//tumor purity(-100 for normal); sep by space
